@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TestTaskAppInTheAir</string>
+    <string name="button_submit_text">Submit</string>
 </resources>
