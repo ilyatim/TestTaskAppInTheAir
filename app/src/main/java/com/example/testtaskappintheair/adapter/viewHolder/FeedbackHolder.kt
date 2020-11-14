@@ -20,7 +20,7 @@ class FeedbackHolder(
     override fun bind(cell: RateCell) {
         val feedBackCell = cell as RateCell.FeedbackDataClass
         titleTextView.text = feedBackCell.title
-        editText.text = (feedBackCell.text ?: "") as Editable?
+        editText.setText((feedBackCell.text ?: ""), TextView.BufferType.EDITABLE)
     }
 
     override fun onClick(p0: View?) {
