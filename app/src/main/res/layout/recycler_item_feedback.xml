@@ -7,17 +7,16 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textViewFeedback"
+        android:id="@+id/submit_fragment_recycler_feedback_text_view"
         android:layout_width="105dp"
         android:layout_height="27dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextTextMultiLine"
+        android:id="@+id/submit_fragment_recycler_feedback_edit_text"
         android:layout_width="384dp"
         android:layout_height="64dp"
         android:layout_marginTop="16dp"
@@ -26,6 +25,6 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFeedback"
+        app:layout_constraintTop_toBottomOf="@+id/submit_fragment_recycler_feedback_text_view"
         android:autofillHints="Input" />
 </androidx.constraintlayout.widget.ConstraintLayout>

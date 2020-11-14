@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">TestTaskAppInTheAir</string>
     <string name="button_submit_text">Submit</string>
+
+    <!-- Strings for recycler view-->
+    <string name="feedback_title_rate_experience">How do you rate the overall flight experience?</string>
+    <string name="feedback_title_rate_crowded">How crowded was the flight?</string>
+    <string name="feedback_title_rate_aircraft">How do you rate the aircraft?</string>
+    <string name="feedback_title_rate_seats">How do you rate the seats?</string>
+    <string name="feedback_title_rate_crew">How do you rate the crew?</string>
+    <string name="feedback_title_rate_food">How do you rate the food</string>
+    <string name="feedback_radio_button_food">There were no food</string>
+    <string name="feedback_edit_text_title">Leave any feedback</string>
+    <string name="feedback_edit_text_hint">Share your experience. How was the seat? How was the food? Any tips?</string>
 </resources>

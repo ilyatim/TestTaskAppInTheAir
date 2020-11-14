@@ -49,4 +49,7 @@ dependencies {
     //Material design dependency
     implementation 'com.google.android.material:material:1.2.1'
 
+    //Android Fragment KTX
+    implementation "androidx.fragment:fragment-ktx:1.2.5"
+
 }
