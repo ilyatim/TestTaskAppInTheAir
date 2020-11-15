@@ -1,6 +1,5 @@
 package com.example.testtaskappintheair.ui
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,14 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testtaskappintheair.R
 import com.example.testtaskappintheair.SubmitViewModel
 import com.example.testtaskappintheair.adapter.RecyclerViewAdapter
-import com.example.testtaskappintheair.model.RateCell
 import com.google.android.material.appbar.CollapsingToolbarLayout
 
 class SubmitFragment : Fragment() {

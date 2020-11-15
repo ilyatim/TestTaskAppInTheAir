@@ -1,22 +1,27 @@
 package com.example.testtaskappintheair.adapter.viewHolder
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import com.example.testtaskappintheair.R
-import com.example.testtaskappintheair.model.RateCell
+import com.example.testtaskappintheair.model.RecyclerViewCell
 
 class RadioButtonHolder(
     layoutInflater: LayoutInflater,
     parent: ViewGroup
-//TODO: TASK: create radio button layout
-) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_button, parent, false)) {
+) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_radio_button, parent, false)),
+    RadioGroup.OnCheckedChangeListener {
 
-    override fun bind(cell: RateCell) {
-        TODO("Not yet implemented")
+    private val radioButton: RadioButton = itemView.findViewById(R.id.submit_fragment_recycler_feedback_radio_button)
+
+    override fun bind(cell: RecyclerViewCell) {
+        val radioButtonCell = cell as RecyclerViewCell.MRadioButtonDataClass
+        radioButton.text = radioButtonCell.title
+        radioButton.isChecked = radioButtonCell.checked
     }
 
-    override fun onClick(p0: View?) {
+    override fun onCheckedChanged(p0: RadioGroup?, p1: Int) {
         TODO("Not yet implemented")
     }
 

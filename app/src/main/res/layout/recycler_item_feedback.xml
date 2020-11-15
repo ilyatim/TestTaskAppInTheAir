@@ -8,8 +8,8 @@
 
     <TextView
         android:id="@+id/submit_fragment_recycler_feedback_text_view"
-        android:layout_width="105dp"
-        android:layout_height="27dp"
+        android:layout_width="261dp"
+        android:layout_height="42dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
