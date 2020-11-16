@@ -9,21 +9,20 @@ import com.example.testtaskappintheair.model.RecyclerViewCell
 
 class RateHolder(
     layoutInflater: LayoutInflater,
-    parent: ViewGroup
-) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_rate, parent, false)),
-    RatingBar.OnRatingBarChangeListener {
+    parent: ViewGroup,
+    ratingChangeListener: RatingBar.OnRatingBarChangeListener
+) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_rate, parent, false)) {
 
     private val titleTextView: TextView = itemView.findViewById(R.id.submit_fragment_recycler_rating_text_view)
     private val ratingBar: RatingBar = itemView.findViewById(R.id.submit_fragment_recycler_rating_bar)
+
+    init {
+        ratingBar.onRatingBarChangeListener = ratingChangeListener
+    }
 
     override fun bind(cell: RecyclerViewCell) {
         val ratingCell = cell as RecyclerViewCell.ClassicRateDataClass
         titleTextView.text = ratingCell.title
         ratingBar.rating = ratingCell.rate.toFloat()
     }
-
-    override fun onRatingChanged(p0: RatingBar?, p1: Float, p2: Boolean) {
-        TODO("Not yet implemented")
-    }
-
 }

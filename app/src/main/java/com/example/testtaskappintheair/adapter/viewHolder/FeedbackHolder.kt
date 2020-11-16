@@ -11,12 +11,16 @@ import com.example.testtaskappintheair.model.RecyclerViewCell
 
 class FeedbackHolder(
     layoutInflater: LayoutInflater,
-    parent: ViewGroup
-) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_feedback, parent, false)),
-    TextWatcher {
+    parent: ViewGroup,
+    textWatcher: TextWatcher
+) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_feedback, parent, false)) {
 
     private val titleTextView: TextView = itemView.findViewById(R.id.submit_fragment_recycler_feedback_text_view)
     private val editText: EditText = itemView.findViewById(R.id.submit_fragment_recycler_feedback_edit_text)
+
+    init {
+        editText.addTextChangedListener(textWatcher)
+    }
 
     override fun bind(cell: RecyclerViewCell) {
         val feedBackCell = cell as RecyclerViewCell.FeedbackDataClass
@@ -24,17 +28,4 @@ class FeedbackHolder(
         editText.setText((feedBackCell.text ?: ""), TextView.BufferType.EDITABLE)
         editText.hint = feedBackCell.hint
     }
-
-    override fun afterTextChanged(p0: Editable?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        TODO("Not yet implemented")
-    }
-
 }
