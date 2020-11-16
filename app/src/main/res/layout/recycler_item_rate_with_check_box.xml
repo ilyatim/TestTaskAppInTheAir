@@ -18,8 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:stepSize="0.5"
-        style="@style/AppThemeRatingBar"/>
+        android:theme="@style/RatingBar"
+        android:stepSize="1"/>
     <CheckBox
         android:id="@+id/submit_fragment_recycler_food_check_box"
         android:layout_width="wrap_content"

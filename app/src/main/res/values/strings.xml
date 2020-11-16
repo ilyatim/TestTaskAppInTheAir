@@ -11,7 +11,9 @@
     <string name="feedback_title_rate_food">How do you rate the food</string>
     <string name="feedback_radio_button_food">There were no food?</string>
     <string name="feedback_edit_text_title">Leave any feedback</string>
-    <string name="feedback_edit_text_hint">Share your experience. How was the seat? How was the food? Any tips?</string>
+    <string name="feedback_edit_text_hint">
+        Share your experience. How was\nthe seat? How was the food? Any tips?
+    </string>
     
     <!-- Strings for header-->
     <string name="header_first_text_view_experience">
