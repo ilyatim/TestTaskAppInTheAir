@@ -5,8 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.testtaskappintheair.adapter.callback.OnCheckBoxChangeListenerCallback
-import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeListenerCallback
+import com.example.testtaskappintheair.adapter.callback.OnCheckBoxChangeCallback
+import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeCallback
+import com.example.testtaskappintheair.adapter.callback.OnTextChangeCallback
 import com.example.testtaskappintheair.adapter.viewHolder.*
 import com.example.testtaskappintheair.model.RecyclerViewCell
 
@@ -14,9 +15,10 @@ class RecyclerViewAdapter(
     private var items: List<RecyclerViewCell>,
     private val inflater: LayoutInflater,
     private val buttonClickListener: View.OnClickListener,
-    private val checkBoxClickListener: OnCheckBoxChangeListenerCallback,
-    private val onRatingBarChangeListener: OnRatingBarChangeListenerCallback,
-    private val textWatcher: TextWatcher
+    private val checkBoxClickListener: OnCheckBoxChangeCallback,
+    private val onRatingBarChangeListener: OnRatingBarChangeCallback,
+    private val textWatcher: TextWatcher,
+    private val onTextChangeCallback: OnTextChangeCallback
 ) : RecyclerView.Adapter<AbsViewHolder>() {
 
     private val viewTypeValues = ViewType.values()
@@ -27,6 +29,11 @@ class RecyclerViewAdapter(
             is RecyclerViewCell.ButtonDataClass -> ViewType.BUTTON
             is RecyclerViewCell.RateWithCheckBoxDataClass -> ViewType.RADIOBUTTON
         }
+
+    fun updateAll(newItems: List<RecyclerViewCell>, pos: Int) {
+        items = newItems
+        notifyItemChanged(pos)
+    }
 
     private fun getItem(position: Int) = items[position]
 
@@ -41,7 +48,8 @@ class RecyclerViewAdapter(
             ViewType.FEEDBACK -> FeedbackHolder(
                 inflater,
                 parent,
-                textWatcher
+                textWatcher,
+                onTextChangeCallback
             )
             ViewType.BUTTON -> ButtonHolder(
                 inflater,

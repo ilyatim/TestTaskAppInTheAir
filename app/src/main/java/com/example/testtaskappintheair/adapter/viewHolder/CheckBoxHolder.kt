@@ -6,13 +6,13 @@ import android.widget.CheckBox
 import android.widget.RatingBar
 import android.widget.TextView
 import com.example.testtaskappintheair.R
-import com.example.testtaskappintheair.adapter.callback.OnCheckBoxChangeListenerCallback
+import com.example.testtaskappintheair.adapter.callback.OnCheckBoxChangeCallback
 import com.example.testtaskappintheair.model.RecyclerViewCell
 
 class CheckBoxHolder(
     layoutInflater: LayoutInflater,
     parent: ViewGroup,
-    onCheckBoxChangeListener: OnCheckBoxChangeListenerCallback
+    onCheckBoxChangeListener: OnCheckBoxChangeCallback
 ) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_rate_with_check_box, parent, false)) {
 
     private val checkBox: CheckBox = itemView.findViewById(R.id.submit_fragment_recycler_food_check_box)
@@ -21,10 +21,10 @@ class CheckBoxHolder(
 
     init {
         checkBox.setOnCheckedChangeListener { button, checked ->
-            onCheckBoxChangeListener.onStateChange(adapterPosition, ratingBar.rating.toInt(), checked, ratingBar, checkBox)
+            onCheckBoxChangeListener.onCheckBoxStateChange(adapterPosition, checked, ratingBar.rating.toInt(),  ratingBar)
         }
         ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
-            onCheckBoxChangeListener.onStateChange(adapterPosition, rating.toInt(), checkBox.isChecked, ratingBar, checkBox)
+            onCheckBoxChangeListener.onRatingBarChange(adapterPosition, rating.toInt(), checkBox.isChecked)
         }
     }
 

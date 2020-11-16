@@ -5,13 +5,13 @@ import android.view.ViewGroup
 import android.widget.RatingBar
 import android.widget.TextView
 import com.example.testtaskappintheair.R
-import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeListenerCallback
+import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeCallback
 import com.example.testtaskappintheair.model.RecyclerViewCell
 
 class RateHolder(
     layoutInflater: LayoutInflater,
     parent: ViewGroup,
-    ratingChangeListener: OnRatingBarChangeListenerCallback
+    ratingChangeListener: OnRatingBarChangeCallback
 ) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_rate, parent, false)) {
 
     private val titleTextView: TextView = itemView.findViewById(R.id.submit_fragment_recycler_rating_text_view)
@@ -19,7 +19,7 @@ class RateHolder(
 
     init {
         ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
-            ratingChangeListener.onRatingBarChange(adapterPosition, ratingBar, rating, fromUser)
+            ratingChangeListener.onRatingBarChange(adapterPosition, rating)
         }
     }
 
