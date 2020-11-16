@@ -4,8 +4,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RatingBar
 import androidx.recyclerview.widget.RecyclerView
+import com.example.testtaskappintheair.adapter.callback.OnCheckBoxChangeListenerCallback
+import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeListenerCallback
 import com.example.testtaskappintheair.adapter.viewHolder.*
 import com.example.testtaskappintheair.model.RecyclerViewCell
 
@@ -13,8 +14,8 @@ class RecyclerViewAdapter(
     private var items: List<RecyclerViewCell>,
     private val inflater: LayoutInflater,
     private val buttonClickListener: View.OnClickListener,
-    private val checkBoxClickListener: View.OnClickListener,
-    private val onRatingBarChangeListener: RatingBar.OnRatingBarChangeListener,
+    private val checkBoxClickListener: OnCheckBoxChangeListenerCallback,
+    private val onRatingBarChangeListener: OnRatingBarChangeListenerCallback,
     private val textWatcher: TextWatcher
 ) : RecyclerView.Adapter<AbsViewHolder>() {
 
@@ -23,14 +24,9 @@ class RecyclerViewAdapter(
         get() = when (this) {
             is RecyclerViewCell.ClassicRateDataClass -> ViewType.RATE
             is RecyclerViewCell.FeedbackDataClass -> ViewType.FEEDBACK
-            is RecyclerViewCell.MButtonDataClass -> ViewType.BUTTON
-            is RecyclerViewCell.MRadioButtonDataClass -> ViewType.RADIOBUTTON
+            is RecyclerViewCell.ButtonDataClass -> ViewType.BUTTON
+            is RecyclerViewCell.RateWithCheckBoxDataClass -> ViewType.RADIOBUTTON
         }
-
-    fun update(items: List<RecyclerViewCell>) {
-        this.items = items
-        this.notifyDataSetChanged()
-    }
 
     private fun getItem(position: Int) = items[position]
 
