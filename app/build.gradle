@@ -61,4 +61,6 @@ dependencies {
     //Android Fragment KTX
     implementation "androidx.fragment:fragment-ktx:1.2.5"
 
+    //Android coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
 }
