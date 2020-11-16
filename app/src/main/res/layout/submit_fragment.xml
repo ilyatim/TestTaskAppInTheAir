@@ -11,11 +11,14 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/submit_fragment_app_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/app_bar_height"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            app:titleEnabled="true"
+            android:elevation="6dp"
             android:id="@+id/submit_fragment_collapsing_toolbar_layout"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
@@ -24,10 +27,13 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
+            <include layout="@layout/header_item_rate"/>
+
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/submit_fragment_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                app:navigationIcon="@drawable/ic_clear_24px"
                 app:layout_collapseMode="none"
                 app:popupTheme="@style/AppTheme.PopupOverlay"/>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
