@@ -1,8 +1,6 @@
 package com.example.testtaskappintheair.ui
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +21,7 @@ import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeCallbac
 import com.example.testtaskappintheair.adapter.callback.OnTextChangeCallback
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SubmitFragment : Fragment() {
@@ -76,32 +75,17 @@ class SubmitFragment : Fragment() {
             viewModel.dataUpdate(pos, rating.toInt())
         }
     }
-    private val textWatcher = object : TextWatcher {
-        //TODO: text changing processing
-        override fun beforeTextChanged(
-            p0: CharSequence?,
-            p1: Int,
-            p2: Int,
-            p3: Int
-        ) {
-
-        }
-        override fun onTextChanged(
-            p0: CharSequence?,
-            p1: Int,
-            p2: Int,
-            p3: Int
-        ) {
-
-        }
-        override fun afterTextChanged(p0: Editable?) {
-
-        }
-    }
-    //TODO: refactor
     private val onTextChangeListener = object : OnTextChangeCallback {
+        private var searchFor = ""
         override fun onTextChange(pos: Int, text: String) {
-            viewModel.dataUpdate(pos, text)
+            val searchText = text.trim()
+            if (searchText == searchFor) return
+            searchFor = searchText
+            lifecycleScope.launch {
+                delay(300)
+                if (searchText != searchFor) return@launch
+                viewModel.dataUpdate(pos, searchText)
+            }
         }
 
     }
@@ -129,6 +113,7 @@ class SubmitFragment : Fragment() {
             activity.finish()
         }
 
+
         recyclerView.layoutManager = LinearLayoutManager(context)
         adapter = RecyclerViewAdapter(
             viewModel.getData(),
@@ -136,7 +121,6 @@ class SubmitFragment : Fragment() {
             onSubmitButtonClickListener,
             onCheckBoxChangeListener,
             onRatingBarChangeListener,
-            textWatcher,
             onTextChangeListener
         )
         recyclerView.adapter = adapter

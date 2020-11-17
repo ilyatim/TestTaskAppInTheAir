@@ -1,6 +1,5 @@
 package com.example.testtaskappintheair.adapter
 
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ class RecyclerViewAdapter(
     private val buttonClickListener: View.OnClickListener,
     private val checkBoxClickListener: OnCheckBoxChangeCallback,
     private val onRatingBarChangeListener: OnRatingBarChangeCallback,
-    private val textWatcher: TextWatcher,
     private val onTextChangeCallback: OnTextChangeCallback
 ) : RecyclerView.Adapter<AbsViewHolder>() {
 
@@ -48,7 +46,6 @@ class RecyclerViewAdapter(
             ViewType.FEEDBACK -> FeedbackHolder(
                 inflater,
                 parent,
-                textWatcher,
                 onTextChangeCallback
             )
             ViewType.BUTTON -> ButtonHolder(
