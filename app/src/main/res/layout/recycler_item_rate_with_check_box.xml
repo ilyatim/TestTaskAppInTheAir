@@ -21,6 +21,7 @@
         android:theme="@style/RatingBar"
         android:stepSize="1"/>
     <CheckBox
+        android:textColor="@color/textColorGrey"
         android:id="@+id/submit_fragment_recycler_food_check_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
