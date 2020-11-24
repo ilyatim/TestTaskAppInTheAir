@@ -4,8 +4,12 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#ffcc00</color>
+    <color name="black">#000000</color>
 
     <color name="ratingBarColorAccent">#ffcc00</color>
-    <color name="ratingBarColorMain">#bfc1c7</color>
+    <color name="ratingBarColorEmpty">#bfc1c7</color>
     <color name="textColorGrey">#b1b4bb</color>
+    <color name="submitButtonSurfaceColor">#323c46</color>
+    <color name="white">#ffffff</color>
+    <color name="checkBoxColor">#258dff</color>
 </resources>
