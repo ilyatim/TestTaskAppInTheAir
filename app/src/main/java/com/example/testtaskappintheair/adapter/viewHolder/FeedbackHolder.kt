@@ -14,10 +14,16 @@ class FeedbackHolder(
     layoutInflater: LayoutInflater,
     parent: ViewGroup,
     onTextChangeCallback: OnTextChangeCallback
-) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_feedback, parent, false)) {
+) : AbsViewHolder(layoutInflater.inflate(
+    R.layout.recycler_item_feedback,
+    parent,
+    false
+)) {
 
-    private val titleTextView: TextView = itemView.findViewById(R.id.submit_fragment_recycler_feedback_text_view)
-    private val editText: EditText = itemView.findViewById(R.id.submit_fragment_recycler_feedback_edit_text)
+    private val titleTextView: TextView
+            = itemView.findViewById(R.id.submit_fragment_recycler_feedback_text_view)
+    private val editText: EditText
+            = itemView.findViewById(R.id.submit_fragment_recycler_feedback_edit_text)
 
     init {
         editText.addTextChangedListener { text: Editable? ->

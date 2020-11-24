@@ -1,6 +1,7 @@
 package com.example.testtaskappintheair
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.testtaskappintheair.model.RecyclerViewCell.*
@@ -40,11 +41,13 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
                 is ClassicRateDataClass -> {
                     when (item.rateDataType) {
                         RateDataType.EXP -> exp = item.rate + 1
-                        RateDataType.CROWDED -> crowded = item.rate + 1
                         RateDataType.AIRCRAFT -> aircraft = item.rate + 1
                         RateDataType.SEATS -> seats = item.rate + 1
                         RateDataType.CREW -> crew = item.rate + 1
                     }
+                }
+                is CrowdRateDataClass -> {
+                    crowded = item.rate + 1
                 }
                 is FeedbackDataClass -> {
                     feedback = item.text
@@ -65,13 +68,35 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
         )
     }
     fun dataUpdate(position: Int, newValue: Int): Boolean {
-        val item = items.value?.removeAt(position) as ClassicRateDataClass
-        items.value?.apply {
-            add(position, createRecyclerCell(item.title, newValue, item.rateDataType))
+        return when (val item = items.value?.removeAt(position)) {
+            is ClassicRateDataClass -> {
+                items.value?.apply {
+                    add(position, createRecyclerCell(
+                        item.title,
+                        newValue,
+                        item.rateDataType
+                    ))
+                }
+                true
+            }
+            is CrowdRateDataClass -> {
+                items.value?.apply {
+                    add(position, createCrowdRateCell(
+                        item.title,
+                        newValue,
+                        item.rateDataType
+                    ))
+                }
+                true
+            }
+            else -> false
         }
-        return true
     }
-    fun dataUpdate(position: Int, rate: Int, checked: Boolean): Boolean {
+    fun dataUpdate(
+        position: Int,
+        rate: Int,
+        checked: Boolean
+    ): Boolean {
         val item = items.value?.removeAt(position) as RateWithCheckBoxDataClass
         items.value?.apply {
             add(position, createRecyclerCell(
@@ -86,12 +111,20 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
     fun dataUpdate(position: Int, newValue: String): Boolean{
         val item = items.value?.removeAt(position) as FeedbackDataClass
         items.value?.apply {
-            add(position, createRecyclerCell(item.title, newValue, item.hint))
+            add(position, createRecyclerCell(
+                item.title,
+                newValue,
+                item.hint
+            ))
         }
         return true
     }
     fun dataUpdate(newRating: Int): Boolean {
-        headerRate.value = headerRate.value?.let { createRecyclerCell(it.title, newRating, it.rateDataType) }
+        headerRate.value = headerRate.value?.let { createRecyclerCell(
+            it.title,
+            newRating,
+            it.rateDataType
+        ) }
         return true
     }
 
@@ -99,7 +132,7 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
         items.value = mutableListOf()
         items.value?.addAll(
             listOf(
-                createRecyclerCell(
+                createCrowdRateCell(
                     resources.getString(R.string.feedback_title_rate_crowded),
                     0,
                     RateDataType.CROWDED
@@ -134,15 +167,49 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
             )
         )
     }
-    private fun createRecyclerCell(title: String, rate: Int, rateDataType: RateDataType):
-            ClassicRateDataClass = ClassicRateDataClass(title, rate, rateDataType)
 
-    private fun createRecyclerCell(title: String, text: String?, hint: String):
-            FeedbackDataClass = FeedbackDataClass(title, text, hint)
+    private fun createCrowdRateCell(
+        title: String,
+        rate: Int,
+        rateDataType: RateDataType
+    ): CrowdRateDataClass = CrowdRateDataClass(
+        title,
+        rate,
+        rateDataType
+    )
+
+    private fun createRecyclerCell(
+        title: String,
+        rate: Int,
+        rateDataType: RateDataType
+    ): ClassicRateDataClass = ClassicRateDataClass(
+        title,
+        rate,
+        rateDataType
+    )
+
+    private fun createRecyclerCell(
+        title: String,
+        text: String?,
+        hint: String
+    ): FeedbackDataClass = FeedbackDataClass(
+        title,
+        text,
+        hint
+    )
 
     private fun createRecyclerCell(title: String):
             ButtonDataClass = ButtonDataClass(title)
 
-    private fun createRecyclerCell(title: String, subtitle: String, rating: Int, checked: Boolean):
-            RateWithCheckBoxDataClass = RateWithCheckBoxDataClass(title, subtitle, rating, checked)
+    private fun createRecyclerCell(
+        title: String,
+        subtitle: String,
+        rating: Int,
+        checked: Boolean
+    ): RateWithCheckBoxDataClass = RateWithCheckBoxDataClass(
+        title,
+        subtitle,
+        rating,
+        checked
+    )
 }

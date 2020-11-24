@@ -13,18 +13,34 @@ class CheckBoxHolder(
     layoutInflater: LayoutInflater,
     parent: ViewGroup,
     onCheckBoxChangeListener: OnCheckBoxChangeCallback
-) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_rate_with_check_box, parent, false)) {
+) : AbsViewHolder(layoutInflater.inflate(
+    R.layout.recycler_item_rate_with_check_box,
+    parent,
+    false
+)) {
 
-    private val checkBox: CheckBox = itemView.findViewById(R.id.submit_fragment_recycler_food_check_box)
-    private val titleRatingBar: TextView = itemView.findViewById(R.id.submit_fragment_recycler_rating_check_box_text_view)
-    private val ratingBar: RatingBar = itemView.findViewById(R.id.submit_fragment_recycler_check_box_rating_bar)
+    private val checkBox: CheckBox
+            = itemView.findViewById(R.id.submit_fragment_recycler_food_check_box)
+    private val titleRatingBar: TextView
+            = itemView.findViewById(R.id.submit_fragment_recycler_rating_check_box_text_view)
+    private val ratingBar: RatingBar
+            = itemView.findViewById(R.id.submit_fragment_recycler_check_box_rating_bar)
 
     init {
         checkBox.setOnCheckedChangeListener { button, checked ->
-            onCheckBoxChangeListener.onCheckBoxStateChange(adapterPosition, checked, ratingBar.rating.toInt(),  ratingBar)
+            onCheckBoxChangeListener.onCheckBoxStateChange(
+                adapterPosition,
+                checked,
+                ratingBar.rating.toInt(),
+                ratingBar
+            )
         }
         ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
-            onCheckBoxChangeListener.onRatingBarChange(adapterPosition, rating.toInt(), checkBox.isChecked)
+            onCheckBoxChangeListener.onRatingBarChange(
+                adapterPosition,
+                rating.toInt(),
+                checkBox.isChecked
+            )
         }
     }
 

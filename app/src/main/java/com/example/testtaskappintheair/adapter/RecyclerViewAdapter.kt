@@ -22,10 +22,11 @@ class RecyclerViewAdapter(
     private val viewTypeValues = ViewType.values()
     private val RecyclerViewCell.viewType: ViewType
         get() = when (this) {
-            is RecyclerViewCell.ClassicRateDataClass -> ViewType.RATE
+            is RecyclerViewCell.ClassicRateDataClass -> ViewType.CLASSICRATE
+            is RecyclerViewCell.CrowdRateDataClass -> ViewType.CROWDRATE
             is RecyclerViewCell.FeedbackDataClass -> ViewType.FEEDBACK
             is RecyclerViewCell.ButtonDataClass -> ViewType.BUTTON
-            is RecyclerViewCell.RateWithCheckBoxDataClass -> ViewType.RADIOBUTTON
+            is RecyclerViewCell.RateWithCheckBoxDataClass -> ViewType.CHECKBOX
         }
 
     fun updateAll(newItems: List<RecyclerViewCell>, pos: Int) {
@@ -38,7 +39,12 @@ class RecyclerViewAdapter(
     override fun getItemViewType(position: Int): Int = getItem(position).viewType.ordinal
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbsViewHolder {
         return when (viewTypeValues[viewType]) {
-            ViewType.RATE -> RateHolder(
+            ViewType.CLASSICRATE -> ClassicRateHolder(
+                inflater,
+                parent,
+                onRatingBarChangeListener
+            )
+            ViewType.CROWDRATE -> CrowdRateHolder(
                 inflater,
                 parent,
                 onRatingBarChangeListener
@@ -53,7 +59,7 @@ class RecyclerViewAdapter(
                 parent,
                 buttonClickListener
             )
-            ViewType.RADIOBUTTON -> CheckBoxHolder(
+            ViewType.CHECKBOX -> CheckBoxHolder(
                 inflater,
                 parent,
                 checkBoxClickListener
@@ -66,9 +72,10 @@ class RecyclerViewAdapter(
     }
 
     private enum class ViewType {
-        RATE,
+        CLASSICRATE,
+        CROWDRATE,
         FEEDBACK,
         BUTTON,
-        RADIOBUTTON,
+        CHECKBOX,
     }
 }

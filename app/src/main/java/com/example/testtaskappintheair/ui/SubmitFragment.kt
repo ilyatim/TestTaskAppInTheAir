@@ -1,14 +1,18 @@
 package com.example.testtaskappintheair.ui
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +23,7 @@ import com.example.testtaskappintheair.adapter.RecyclerViewAdapter
 import com.example.testtaskappintheair.adapter.callback.OnCheckBoxChangeCallback
 import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeCallback
 import com.example.testtaskappintheair.adapter.callback.OnTextChangeCallback
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -30,11 +35,16 @@ class SubmitFragment : Fragment() {
         fun newInstance() = SubmitFragment()
     }
 
+    private val duration = 350L
     private val viewModel: SubmitViewModel by viewModels()
     private lateinit var adapter: RecyclerViewAdapter
 
     private val onSubmitButtonClickListener = View.OnClickListener {
-        Toast.makeText(context, viewModel.getSubmitData().toJson(), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            viewModel.getSubmitData().toJson(),
+            Toast.LENGTH_SHORT
+        ).show()
     }
     private val onCheckBoxChangeListener = object : OnCheckBoxChangeCallback {
         override fun onCheckBoxStateChange(
@@ -49,7 +59,7 @@ class SubmitFragment : Fragment() {
                 rating,
                 checked
             )
-            if (checked) {
+            if (checked and (rating > 0)) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     adapter.updateAll(viewModel.getData(), pos)
                 }
@@ -103,6 +113,10 @@ class SubmitFragment : Fragment() {
         val activity = activity as AppCompatActivity
         val recyclerView: RecyclerView = view.findViewById(R.id.submit_fragment_recycler_view)
         val headerRatingBar = view.findViewById<RatingBar>(R.id.header_rating_bar)
+        val textViewHeaderText = view.findViewById<TextView>(R.id.headerTextViewExperience)
+        val textViewHeaderTextInfo = view.findViewById<TextView>(R.id.headerTextViewInfo)
+        val mAppBarLayout = view.findViewById<AppBarLayout>(R.id.submit_fragment_app_bar)
+
         headerRatingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
             viewModel.dataUpdate(rating.toInt())
         }
@@ -113,6 +127,43 @@ class SubmitFragment : Fragment() {
             activity.finish()
         }
 
+        mAppBarLayout.addOnOffsetChangedListener(
+            AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+                if (appBarLayout.totalScrollRange + verticalOffset < 650) {
+                    animStart(
+                        textViewHeaderText,
+                        0f,
+                        View.GONE
+                    )
+                    animStart(
+                        textViewHeaderTextInfo,
+                        0f,
+                        View.GONE
+                    )
+                    animStart(
+                        headerRatingBar,
+                        0f,
+                        View.GONE
+                    )
+                } else {
+                    animStart(
+                        textViewHeaderText,
+                        1f,
+                        View.VISIBLE
+                    )
+                    animStart(
+                        textViewHeaderTextInfo,
+                        1f,
+                        View.VISIBLE
+                    )
+                    animStart(
+                        headerRatingBar,
+                        1f,
+                        View.VISIBLE
+                    )
+                }
+            }
+        )
 
         recyclerView.layoutManager = LinearLayoutManager(context)
         adapter = RecyclerViewAdapter(
@@ -126,5 +177,20 @@ class SubmitFragment : Fragment() {
         recyclerView.adapter = adapter
 
         return view
+    }
+
+    private fun animStart(
+        view: View,
+        alpha: Float,
+        visibility: Int
+    ) {
+        view.animate()
+            .setDuration(duration)
+            .alpha(alpha)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    view.visibility = visibility
+                }
+            })
     }
 }

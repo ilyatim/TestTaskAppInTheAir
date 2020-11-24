@@ -8,6 +8,12 @@ sealed class RecyclerViewCell {
         val rateDataType: RateDataType
     ) : RecyclerViewCell()
 
+    data class CrowdRateDataClass(
+        val title: String,
+        val rate: Int,
+        val rateDataType: RateDataType
+    ) : RecyclerViewCell()
+
     data class FeedbackDataClass(
         val title: String,
         val text: String?,

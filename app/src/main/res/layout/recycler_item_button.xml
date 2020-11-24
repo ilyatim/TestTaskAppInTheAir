@@ -10,5 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="@string/button_submit_text" />
+        android:background="@drawable/rounded_submit_button"
+        android:textColor="@color/white"
+        android:text="@string/button_submit_text"
+        android:textAllCaps="false"/>
 </LinearLayout>
