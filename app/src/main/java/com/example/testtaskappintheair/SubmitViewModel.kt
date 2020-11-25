@@ -11,6 +11,8 @@ import com.example.testtaskappintheair.model.SubmitObject
 
 class SubmitViewModel(app: Application) : AndroidViewModel(app) {
 
+    private val expandedHeaderView: MutableLiveData<Boolean> = MutableLiveData(true)
+    private val adapterPosition: MutableLiveData<Int> = MutableLiveData()
     private val resources = getApplication<Application>().applicationContext.resources
 
     private val headerRate: MutableLiveData<ClassicRateDataClass> = MutableLiveData(createRecyclerCell(
@@ -21,6 +23,12 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
     private val items: MutableLiveData<MutableList<RecyclerViewCell>>
             = MutableLiveData(mutableListOf())
 
+    fun getExpanded(): Boolean = expandedHeaderView.value!!
+    fun setExpanded(value: Boolean) = expandedHeaderView.setValue(value)
+    fun getAdapterPosition(): Int? = adapterPosition.value
+    fun setAdapterPosition(value: Int) {
+        adapterPosition.value = value
+    }
     fun getData(): List<RecyclerViewCell> {
         if ((items.value == null) or (items.value?.isEmpty()!!)) {
             initData()

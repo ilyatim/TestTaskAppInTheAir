@@ -3,16 +3,17 @@ package com.example.testtaskappintheair.ui
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,9 +26,12 @@ import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeCallbac
 import com.example.testtaskappintheair.adapter.callback.OnTextChangeCallback
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import kotlinx.android.synthetic.main.submit_fragment.*
+import kotlinx.android.synthetic.main.submit_fragment_content.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 class SubmitFragment : Fragment() {
 
@@ -36,8 +40,13 @@ class SubmitFragment : Fragment() {
     }
 
     private val duration = 350L
+    private val alphaVisible = 1f
+    private val alphaInvisible = 0f
     private val viewModel: SubmitViewModel by viewModels()
-    private lateinit var adapter: RecyclerViewAdapter
+    private var adapter: RecyclerViewAdapter? = null
+    private var recyclerView: RecyclerView? = null
+    private var collapsingToolbarLayout: CollapsingToolbarLayout? = null
+    private var mAppBarLayout: AppBarLayout? = null
 
     private val onSubmitButtonClickListener = View.OnClickListener {
         Toast.makeText(
@@ -61,7 +70,7 @@ class SubmitFragment : Fragment() {
             )
             if (checked and (rating > 0)) {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    adapter.updateAll(viewModel.getData(), pos)
+                    adapter?.updateAll(viewModel.getData(), pos)
                 }
             }
         }
@@ -100,6 +109,19 @@ class SubmitFragment : Fragment() {
 
     }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        mAppBarLayout?.setExpanded(viewModel.getExpanded())
+        recyclerView?.layoutManager?.scrollToPosition(viewModel.getAdapterPosition() ?: 0)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        val layoutManager = recyclerView?.layoutManager as LinearLayoutManager
+        viewModel.setAdapterPosition(layoutManager.findLastVisibleItemPosition())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -111,61 +133,65 @@ class SubmitFragment : Fragment() {
             false
         )
         val activity = activity as AppCompatActivity
-        val recyclerView: RecyclerView = view.findViewById(R.id.submit_fragment_recycler_view)
+        collapsingToolbarLayout = view.findViewById(R.id.submit_fragment_collapsing_toolbar_layout)
+        recyclerView = view.findViewById(R.id.submit_fragment_recycler_view)
         val headerRatingBar = view.findViewById<RatingBar>(R.id.header_rating_bar)
         val textViewHeaderText = view.findViewById<TextView>(R.id.headerTextViewExperience)
         val textViewHeaderTextInfo = view.findViewById<TextView>(R.id.headerTextViewInfo)
-        val mAppBarLayout = view.findViewById<AppBarLayout>(R.id.submit_fragment_app_bar)
+        mAppBarLayout = view.findViewById(R.id.submit_fragment_app_bar)
 
         headerRatingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
             viewModel.dataUpdate(rating.toInt())
         }
 
-        activity.setSupportActionBar(view.findViewById(R.id.submit_fragment_toolbar))
-        view.findViewById<CollapsingToolbarLayout>(R.id.submit_fragment_collapsing_toolbar_layout).title = " "
+        //TODO: TASK: solve the bug
+        //activity.setSupportActionBar(view.findViewById(R.id.submit_fragment_toolbar))
+        collapsingToolbarLayout?.title = " "
         view.findViewById<Toolbar>(R.id.submit_fragment_toolbar).setNavigationOnClickListener {
             activity.finish()
         }
 
-        mAppBarLayout.addOnOffsetChangedListener(
+        mAppBarLayout?.addOnOffsetChangedListener(
             AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
                 if (appBarLayout.totalScrollRange + verticalOffset < 650) {
-                    animStart(
+                    animInit(
                         textViewHeaderText,
-                        0f,
+                        alphaInvisible,
                         View.GONE
                     )
-                    animStart(
+                    animInit(
                         textViewHeaderTextInfo,
-                        0f,
+                        alphaInvisible,
                         View.GONE
                     )
-                    animStart(
+                    animInit(
                         headerRatingBar,
-                        0f,
+                        alphaInvisible,
                         View.GONE
                     )
+                    viewModel.setExpanded(false)
                 } else {
-                    animStart(
+                    animInit(
                         textViewHeaderText,
-                        1f,
+                        alphaVisible,
                         View.VISIBLE
                     )
-                    animStart(
+                    animInit(
                         textViewHeaderTextInfo,
-                        1f,
+                        alphaVisible,
                         View.VISIBLE
                     )
-                    animStart(
+                    animInit(
                         headerRatingBar,
-                        1f,
+                        alphaVisible,
                         View.VISIBLE
                     )
+                    viewModel.setExpanded(true)
                 }
             }
         )
-
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        val linearLayoutManager = LinearLayoutManager(context)
+        recyclerView?.layoutManager = linearLayoutManager
         adapter = RecyclerViewAdapter(
             viewModel.getData(),
             inflater,
@@ -174,12 +200,19 @@ class SubmitFragment : Fragment() {
             onRatingBarChangeListener,
             onTextChangeListener
         )
-        recyclerView.adapter = adapter
-
+        recyclerView?.adapter = adapter
         return view
     }
 
-    private fun animStart(
+    override fun onDestroyView() {
+        super.onDestroyView()
+        recyclerView = null
+        mAppBarLayout = null
+        collapsingToolbarLayout = null
+        adapter = null
+    }
+
+    private fun animInit(
         view: View,
         alpha: Float,
         visibility: Int

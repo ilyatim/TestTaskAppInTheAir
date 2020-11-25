@@ -9,6 +9,7 @@
 
 
     <com.google.android.material.appbar.AppBarLayout
+        android:layout_weight="1"
         android:id="@+id/submit_fragment_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,11 +21,10 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             app:titleEnabled="true"
             android:id="@+id/submit_fragment_collapsing_toolbar_layout"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:fitsSystemWindows="true"
             android:background="@drawable/rounded_header_view"
-            app:scrimAnimationDuration="0"
             app:toolbarId="@+id/submit_fragment_toolbar"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
