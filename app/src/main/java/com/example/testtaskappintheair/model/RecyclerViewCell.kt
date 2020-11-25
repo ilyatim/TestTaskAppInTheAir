@@ -1,5 +1,9 @@
 package com.example.testtaskappintheair.model
 
+
+/**
+ * Sealed data class for different view type in recycler view
+ */
 sealed class RecyclerViewCell {
 
     data class ClassicRateDataClass(

@@ -15,13 +15,15 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
     private val adapterPosition: MutableLiveData<Int> = MutableLiveData()
     private val resources = getApplication<Application>().applicationContext.resources
 
-    private val headerRate: MutableLiveData<ClassicRateDataClass> = MutableLiveData(createRecyclerCell(
-        resources.getString(R.string.header_first_text_view_experience),
-        0,
-        RateDataType.EXP
-    ))
-    private val items: MutableLiveData<MutableList<RecyclerViewCell>>
-            = MutableLiveData(mutableListOf())
+    private val headerRate: MutableLiveData<ClassicRateDataClass> = MutableLiveData(
+        createRecyclerCell(
+            resources.getString(R.string.header_first_text_view_experience),
+            0,
+            RateDataType.EXP
+        )
+    )
+    private val items: MutableLiveData<MutableList<RecyclerViewCell>> =
+        MutableLiveData(mutableListOf())
 
     fun getExpanded(): Boolean = expandedHeaderView.value!!
     fun setExpanded(value: Boolean) = expandedHeaderView.setValue(value)
@@ -29,12 +31,17 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
     fun setAdapterPosition(value: Int) {
         adapterPosition.value = value
     }
+
     fun getData(): List<RecyclerViewCell> {
         if ((items.value == null) or (items.value?.isEmpty()!!)) {
             initData()
         }
         return items.value!!
     }
+
+    /*
+    * Func that convert data in Submit object and return it
+    * */
     fun getSubmitData(): SubmitObject {
         var exp: Int = this.headerRate.value?.rate!! + 1
         var crowded: Int = 1
@@ -58,7 +65,7 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
                     crowded = item.rate + 1
                 }
                 is FeedbackDataClass -> {
-                    feedback = item.text
+                    feedback = if (item.text == "") null else item.text
                 }
                 is RateWithCheckBoxDataClass -> {
                     food = if (item.checked) null else item.rate + 1
@@ -75,31 +82,37 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
             feedback
         )
     }
+
     fun dataUpdate(position: Int, newValue: Int): Boolean {
         return when (val item = items.value?.removeAt(position)) {
             is ClassicRateDataClass -> {
                 items.value?.apply {
-                    add(position, createRecyclerCell(
-                        item.title,
-                        newValue,
-                        item.rateDataType
-                    ))
+                    add(
+                        position, createRecyclerCell(
+                            item.title,
+                            newValue,
+                            item.rateDataType
+                        )
+                    )
                 }
                 true
             }
             is CrowdRateDataClass -> {
                 items.value?.apply {
-                    add(position, createCrowdRateCell(
-                        item.title,
-                        newValue,
-                        item.rateDataType
-                    ))
+                    add(
+                        position, createCrowdRateCell(
+                            item.title,
+                            newValue,
+                            item.rateDataType
+                        )
+                    )
                 }
                 true
             }
             else -> false
         }
     }
+
     fun dataUpdate(
         position: Int,
         rate: Int,
@@ -107,32 +120,40 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
     ): Boolean {
         val item = items.value?.removeAt(position) as RateWithCheckBoxDataClass
         items.value?.apply {
-            add(position, createRecyclerCell(
-                item.title,
-                item.subtitle,
-                if (checked) 0 else rate,
-                checked
-            ))
+            add(
+                position, createRecyclerCell(
+                    item.title,
+                    item.subtitle,
+                    if (checked) 0 else rate,
+                    checked
+                )
+            )
         }
         return true
     }
-    fun dataUpdate(position: Int, newValue: String): Boolean{
+
+    fun dataUpdate(position: Int, newValue: String): Boolean {
         val item = items.value?.removeAt(position) as FeedbackDataClass
         items.value?.apply {
-            add(position, createRecyclerCell(
-                item.title,
-                newValue,
-                item.hint
-            ))
+            add(
+                position, createRecyclerCell(
+                    item.title,
+                    newValue,
+                    item.hint
+                )
+            )
         }
         return true
     }
+
     fun dataUpdate(newRating: Int): Boolean {
-        headerRate.value = headerRate.value?.let { createRecyclerCell(
-            it.title,
-            newRating,
-            it.rateDataType
-        ) }
+        headerRate.value = headerRate.value?.let {
+            createRecyclerCell(
+                it.title,
+                newRating,
+                it.rateDataType
+            )
+        }
         return true
     }
 

@@ -1,6 +1,5 @@
 package com.example.testtaskappintheair.adapter.callback
 
-import android.widget.CheckBox
 import android.widget.RatingBar
 
 interface OnCheckBoxChangeCallback {

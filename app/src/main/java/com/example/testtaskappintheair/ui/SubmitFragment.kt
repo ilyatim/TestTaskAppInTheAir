@@ -3,8 +3,6 @@ package com.example.testtaskappintheair.ui
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,6 +72,7 @@ class SubmitFragment : Fragment() {
                 }
             }
         }
+
         override fun onRatingBarChange(
             pos: Int,
             rating: Int,
@@ -132,20 +131,20 @@ class SubmitFragment : Fragment() {
             container,
             false
         )
+
         val activity = activity as AppCompatActivity
-        collapsingToolbarLayout = view.findViewById(R.id.submit_fragment_collapsing_toolbar_layout)
-        recyclerView = view.findViewById(R.id.submit_fragment_recycler_view)
         val headerRatingBar = view.findViewById<RatingBar>(R.id.header_rating_bar)
         val textViewHeaderText = view.findViewById<TextView>(R.id.headerTextViewExperience)
         val textViewHeaderTextInfo = view.findViewById<TextView>(R.id.headerTextViewInfo)
+
         mAppBarLayout = view.findViewById(R.id.submit_fragment_app_bar)
+        collapsingToolbarLayout = view.findViewById(R.id.submit_fragment_collapsing_toolbar_layout)
+        recyclerView = view.findViewById(R.id.submit_fragment_recycler_view)
 
         headerRatingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
             viewModel.dataUpdate(rating.toInt())
         }
 
-        //TODO: TASK: solve the bug
-        //activity.setSupportActionBar(view.findViewById(R.id.submit_fragment_toolbar))
         collapsingToolbarLayout?.title = " "
         view.findViewById<Toolbar>(R.id.submit_fragment_toolbar).setNavigationOnClickListener {
             activity.finish()
@@ -212,6 +211,9 @@ class SubmitFragment : Fragment() {
         adapter = null
     }
 
+    /**
+     * Animate alpha of view
+     */
     private fun animInit(
         view: View,
         alpha: Float,
