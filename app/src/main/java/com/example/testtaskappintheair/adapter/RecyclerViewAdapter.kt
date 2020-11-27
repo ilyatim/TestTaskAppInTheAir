@@ -3,7 +3,8 @@ package com.example.testtaskappintheair.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
+import com.example.testtaskappintheair.adapter.callback.AdapterDiffUtilCallBack
 import com.example.testtaskappintheair.adapter.callback.OnCheckBoxChangeCallback
 import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeCallback
 import com.example.testtaskappintheair.adapter.callback.OnTextChangeCallback
@@ -11,13 +12,13 @@ import com.example.testtaskappintheair.adapter.viewHolder.*
 import com.example.testtaskappintheair.model.RecyclerViewCell
 
 class RecyclerViewAdapter(
-    private var items: List<RecyclerViewCell>,
     private val inflater: LayoutInflater,
     private val buttonClickListener: View.OnClickListener,
     private val checkBoxClickListener: OnCheckBoxChangeCallback,
     private val onRatingBarChangeListener: OnRatingBarChangeCallback,
-    private val onTextChangeCallback: OnTextChangeCallback
-) : RecyclerView.Adapter<AbsViewHolder>() {
+    private val onTextChangeCallback: OnTextChangeCallback,
+    private val diffUtil: AdapterDiffUtilCallBack
+) : ListAdapter<RecyclerViewCell, AbsViewHolder>(diffUtil) {
 
     private val viewTypeValues = ViewType.values()
     private val RecyclerViewCell.viewType: ViewType
@@ -29,14 +30,10 @@ class RecyclerViewAdapter(
             is RecyclerViewCell.RateWithCheckBoxDataClass -> ViewType.CHECKBOX
         }
 
-    fun updateAll(newItems: List<RecyclerViewCell>, pos: Int) {
-        items = newItems
-        notifyItemChanged(pos)
+    override fun getItemViewType(position: Int): Int {
+        return getItem(position).viewType.ordinal
     }
 
-    private fun getItem(position: Int) = items[position]
-
-    override fun getItemViewType(position: Int): Int = getItem(position).viewType.ordinal
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbsViewHolder {
         return when (viewTypeValues[viewType]) {
             ViewType.CLASSICRATE -> ClassicRateHolder(
@@ -66,7 +63,7 @@ class RecyclerViewAdapter(
             )
         }
     }
-    override fun getItemCount(): Int = items.size
+
     override fun onBindViewHolder(holder: AbsViewHolder, position: Int) {
         holder.bind(getItem(position))
     }

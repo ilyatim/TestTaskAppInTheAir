@@ -12,16 +12,18 @@ class CrowdRateHolder(
     layoutInflater: LayoutInflater,
     parent: ViewGroup,
     ratingChangeListener: OnRatingBarChangeCallback
-) : AbsViewHolder(layoutInflater.inflate(
-    R.layout.recycler_item_rate_crowd,
-    parent,
-    false
-)) {
+) : AbsViewHolder(
+    layoutInflater.inflate(
+        R.layout.recycler_item_rate_crowd,
+        parent,
+        false
+    )
+) {
 
-    private val titleTextView: TextView
-            = itemView.findViewById(R.id.submit_fragment_recycler_rating_text_view_crowd)
-    private val ratingBar: RatingBar
-            = itemView.findViewById(R.id.submit_fragment_recycler_rating_bar_crowd)
+    private val titleTextView: TextView =
+        itemView.findViewById(R.id.submit_fragment_recycler_rating_text_view_crowd)
+    private val ratingBar: RatingBar =
+        itemView.findViewById(R.id.submit_fragment_recycler_rating_bar_crowd)
 
     init {
         ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->

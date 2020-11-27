@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
@@ -13,20 +14,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testtaskappintheair.R
 import com.example.testtaskappintheair.SubmitViewModel
 import com.example.testtaskappintheair.adapter.RecyclerViewAdapter
+import com.example.testtaskappintheair.adapter.callback.AdapterDiffUtilCallBack
 import com.example.testtaskappintheair.adapter.callback.OnCheckBoxChangeCallback
 import com.example.testtaskappintheair.adapter.callback.OnRatingBarChangeCallback
 import com.example.testtaskappintheair.adapter.callback.OnTextChangeCallback
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.submit_fragment.*
 import kotlinx.android.synthetic.main.submit_fragment_content.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -37,7 +40,9 @@ class SubmitFragment : Fragment() {
         fun newInstance() = SubmitFragment()
     }
 
-    private val duration = 350L
+    private val durationOfHidingText = 350L
+    private val durationOfTextDisplayAnimation = 40L
+    private val progressBarShowDelay = 1000L
     private val alphaVisible = 1f
     private val alphaInvisible = 0f
     private val viewModel: SubmitViewModel by viewModels()
@@ -47,11 +52,7 @@ class SubmitFragment : Fragment() {
     private var mAppBarLayout: AppBarLayout? = null
 
     private val onSubmitButtonClickListener = View.OnClickListener {
-        Toast.makeText(
-            context,
-            viewModel.getSubmitData().toJson(),
-            Toast.LENGTH_SHORT
-        ).show()
+        viewModel.userClickOnSubmitButton()
     }
     private val onCheckBoxChangeListener = object : OnCheckBoxChangeCallback {
         override fun onCheckBoxStateChange(
@@ -60,17 +61,11 @@ class SubmitFragment : Fragment() {
             rating: Int,
             ratingBar: RatingBar
         ) {
-            ratingBar.setIsIndicator(checked)
             viewModel.dataUpdate(
                 pos,
                 rating,
                 checked
             )
-            if (checked and (rating > 0)) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    adapter?.updateAll(viewModel.getData(), pos)
-                }
-            }
         }
 
         override fun onRatingBarChange(
@@ -150,56 +145,88 @@ class SubmitFragment : Fragment() {
             activity.finish()
         }
 
+        viewModel.items.observe(viewLifecycleOwner, Observer {
+            adapter?.submitList(it)
+        })
+
+        viewModel.submitEvent.observe(viewLifecycleOwner, Observer {
+            submit_fragment_progress_bar_layout.visibility = View.VISIBLE
+            activity.window.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
+            lifecycleScope.launch {
+                delay(progressBarShowDelay)
+                submit_fragment_progress_bar_layout.visibility = View.GONE
+                activity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                Toast.makeText(
+                    context,
+                    "Task success ${viewModel.getSubmitData().toJson()}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
+
         mAppBarLayout?.addOnOffsetChangedListener(
             AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-                if (appBarLayout.totalScrollRange + verticalOffset < 650) {
+                if (verticalOffset < 0) {
                     animInit(
                         textViewHeaderText,
                         alphaInvisible,
-                        View.GONE
+                        View.GONE,
+                        durationOfHidingText
                     )
                     animInit(
                         textViewHeaderTextInfo,
                         alphaInvisible,
-                        View.GONE
+                        View.GONE,
+                        durationOfHidingText
                     )
                     animInit(
                         headerRatingBar,
                         alphaInvisible,
-                        View.GONE
+                        View.GONE,
+                        durationOfHidingText
                     )
                     viewModel.setExpanded(false)
                 } else {
                     animInit(
                         textViewHeaderText,
                         alphaVisible,
-                        View.VISIBLE
+                        View.VISIBLE,
+                        durationOfTextDisplayAnimation
                     )
                     animInit(
                         textViewHeaderTextInfo,
                         alphaVisible,
-                        View.VISIBLE
+                        View.VISIBLE,
+                        durationOfTextDisplayAnimation
                     )
                     animInit(
                         headerRatingBar,
                         alphaVisible,
-                        View.VISIBLE
+                        View.VISIBLE,
+                        durationOfTextDisplayAnimation
                     )
                     viewModel.setExpanded(true)
                 }
             }
         )
+
+
         val linearLayoutManager = LinearLayoutManager(context)
         recyclerView?.layoutManager = linearLayoutManager
         adapter = RecyclerViewAdapter(
-            viewModel.getData(),
             inflater,
             onSubmitButtonClickListener,
             onCheckBoxChangeListener,
             onRatingBarChangeListener,
-            onTextChangeListener
+            onTextChangeListener,
+            AdapterDiffUtilCallBack()
         )
         recyclerView?.adapter = adapter
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.itemAnimator = null
         return view
     }
 
@@ -217,7 +244,8 @@ class SubmitFragment : Fragment() {
     private fun animInit(
         view: View,
         alpha: Float,
-        visibility: Int
+        visibility: Int,
+        duration: Long
     ) {
         view.animate()
             .setDuration(duration)

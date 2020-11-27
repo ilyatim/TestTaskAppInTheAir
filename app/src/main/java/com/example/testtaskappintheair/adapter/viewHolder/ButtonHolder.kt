@@ -13,8 +13,8 @@ class ButtonHolder(
     clickListener: View.OnClickListener
 ) : AbsViewHolder(layoutInflater.inflate(R.layout.recycler_item_button, parent, false)) {
 
-    private val submitButton: Button
-            = itemView.findViewById(R.id.submit_fragment_recycler_submit_button)
+    private val submitButton: Button =
+        itemView.findViewById(R.id.submit_fragment_recycler_submit_button)
 
     init {
         submitButton.setOnClickListener(clickListener)

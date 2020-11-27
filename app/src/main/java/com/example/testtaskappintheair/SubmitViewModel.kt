@@ -1,19 +1,24 @@
 package com.example.testtaskappintheair
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.testtaskappintheair.model.RecyclerViewCell.*
 import com.example.testtaskappintheair.model.RecyclerViewCell
-import com.example.testtaskappintheair.model.RecyclerViewCell.ClassicRateDataClass
+import com.example.testtaskappintheair.model.RecyclerViewCell.*
 import com.example.testtaskappintheair.model.SubmitObject
 
 class SubmitViewModel(app: Application) : AndroidViewModel(app) {
 
+    private val initRatingValue = 0
+    private val initCheckBoxValue = false
     private val expandedHeaderView: MutableLiveData<Boolean> = MutableLiveData(true)
     private val adapterPosition: MutableLiveData<Int> = MutableLiveData()
     private val resources = getApplication<Application>().applicationContext.resources
+    private val _submitEvent = SingleLiveEvent<Any>()
+
+    val submitEvent: LiveData<Any>
+        get() = _submitEvent
 
     private val headerRate: MutableLiveData<ClassicRateDataClass> = MutableLiveData(
         createRecyclerCell(
@@ -22,8 +27,15 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
             RateDataType.EXP
         )
     )
-    private val items: MutableLiveData<MutableList<RecyclerViewCell>> =
+    private val _items: MutableLiveData<List<RecyclerViewCell>> =
         MutableLiveData(mutableListOf())
+    val items: LiveData<List<RecyclerViewCell>> = _items
+
+    fun getMItems(): LiveData<List<RecyclerViewCell>> = _items
+
+    init {
+        initData()
+    }
 
     fun getExpanded(): Boolean = expandedHeaderView.value!!
     fun setExpanded(value: Boolean) = expandedHeaderView.setValue(value)
@@ -33,10 +45,10 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun getData(): List<RecyclerViewCell> {
-        if ((items.value == null) or (items.value?.isEmpty()!!)) {
+        if ((_items.value == null) or (_items.value?.isEmpty()!!)) {
             initData()
         }
-        return items.value!!
+        return _items.value!!
     }
 
     /*
@@ -84,9 +96,14 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun dataUpdate(position: Int, newValue: Int): Boolean {
-        return when (val item = items.value?.removeAt(position)) {
+        val item = _items.value?.get(position)
+        val newItems: MutableList<RecyclerViewCell> = mutableListOf()
+        newItems.addAll(getData())
+
+        return when (item) {
             is ClassicRateDataClass -> {
-                items.value?.apply {
+                newItems.apply {
+                    removeAt(position)
                     add(
                         position, createRecyclerCell(
                             item.title,
@@ -95,10 +112,12 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
                         )
                     )
                 }
+                _items.value = newItems
                 true
             }
             is CrowdRateDataClass -> {
-                items.value?.apply {
+                newItems.apply {
+                    removeAt(position)
                     add(
                         position, createCrowdRateCell(
                             item.title,
@@ -107,6 +126,7 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
                         )
                     )
                 }
+                _items.value = newItems
                 true
             }
             else -> false
@@ -118,8 +138,13 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
         rate: Int,
         checked: Boolean
     ): Boolean {
-        val item = items.value?.removeAt(position) as RateWithCheckBoxDataClass
-        items.value?.apply {
+
+        val item = _items.value?.get(position) as RateWithCheckBoxDataClass
+        val newItems: MutableList<RecyclerViewCell> = mutableListOf()
+        newItems.addAll(getData())
+
+        newItems.apply {
+            removeAt(position)
             add(
                 position, createRecyclerCell(
                     item.title,
@@ -129,12 +154,19 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
                 )
             )
         }
+
+        _items.value = newItems
         return true
     }
 
     fun dataUpdate(position: Int, newValue: String): Boolean {
-        val item = items.value?.removeAt(position) as FeedbackDataClass
-        items.value?.apply {
+
+        val item = _items.value?.get(position) as FeedbackDataClass
+        val newItems: MutableList<RecyclerViewCell> = mutableListOf()
+        newItems.addAll(getData())
+
+        newItems.apply {
+            removeAt(position)
             add(
                 position, createRecyclerCell(
                     item.title,
@@ -143,6 +175,8 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
                 )
             )
         }
+
+        _items.value = newItems
         return true
     }
 
@@ -157,43 +191,42 @@ class SubmitViewModel(app: Application) : AndroidViewModel(app) {
         return true
     }
 
+    fun userClickOnSubmitButton() = _submitEvent.call()
+
     private fun initData() {
-        items.value = mutableListOf()
-        items.value?.addAll(
-            listOf(
-                createCrowdRateCell(
-                    resources.getString(R.string.feedback_title_rate_crowded),
-                    0,
-                    RateDataType.CROWDED
-                ),
-                createRecyclerCell(
-                    resources.getString(R.string.feedback_title_rate_aircraft),
-                    0,
-                    RateDataType.AIRCRAFT
-                ),
-                createRecyclerCell(
-                    resources.getString(R.string.feedback_title_rate_seats),
-                    0,
-                    RateDataType.SEATS
-                ),
-                createRecyclerCell(
-                    resources.getString(R.string.feedback_title_rate_crew),
-                    0,
-                    RateDataType.CREW
-                ),
-                createRecyclerCell(
-                    resources.getString(R.string.feedback_title_rate_food),
-                    resources.getString(R.string.feedback_radio_button_food),
-                    0,
-                    false
-                ),
-                createRecyclerCell(
-                    resources.getString(R.string.feedback_edit_text_title),
-                    null,
-                    resources.getString(R.string.feedback_edit_text_hint)
-                ),
-                createRecyclerCell(resources.getString(R.string.button_submit_text))
-            )
+        _items.value = listOf(
+            createCrowdRateCell(
+                resources.getString(R.string.feedback_title_rate_crowded),
+                initRatingValue,
+                RateDataType.CROWDED
+            ),
+            createRecyclerCell(
+                resources.getString(R.string.feedback_title_rate_aircraft),
+                initRatingValue,
+                RateDataType.AIRCRAFT
+            ),
+            createRecyclerCell(
+                resources.getString(R.string.feedback_title_rate_seats),
+                initRatingValue,
+                RateDataType.SEATS
+            ),
+            createRecyclerCell(
+                resources.getString(R.string.feedback_title_rate_crew),
+                initRatingValue,
+                RateDataType.CREW
+            ),
+            createRecyclerCell(
+                resources.getString(R.string.feedback_title_rate_food),
+                resources.getString(R.string.feedback_radio_button_food),
+                initRatingValue,
+                initCheckBoxValue
+            ),
+            createRecyclerCell(
+                resources.getString(R.string.feedback_edit_text_title),
+                null,
+                resources.getString(R.string.feedback_edit_text_hint)
+            ),
+            createRecyclerCell(resources.getString(R.string.button_submit_text))
         )
     }
 

@@ -9,6 +9,7 @@ interface OnCheckBoxChangeCallback {
         rating: Int,
         ratingBar: RatingBar
     )
+
     fun onRatingBarChange(
         pos: Int,
         rating: Int,
