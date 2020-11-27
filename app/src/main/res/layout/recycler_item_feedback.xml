@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:id="@+id/submit_fragment_recycler_feedback_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/rate_text"/>
+
+    <EditText
+        android:id="@+id/submit_fragment_recycler_feedback_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:singleLine="true"
+        android:layout_marginBottom="10dp"
+        android:imeOptions="actionDone"/>
+</LinearLayout>
