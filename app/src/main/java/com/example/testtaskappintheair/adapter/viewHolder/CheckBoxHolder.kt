@@ -51,7 +51,6 @@ class CheckBoxHolder(
         checkBox.text = radioButtonCell.subtitle
         checkBox.isChecked = radioButtonCell.checked
         titleRatingBar.text = radioButtonCell.title
-        //ratingBar.rating = radioButtonCell.rate.toFloat()
         if (radioButtonCell.checked) {
             ratingBar.rating = 0F
             ratingBar.setIsIndicator(true)
